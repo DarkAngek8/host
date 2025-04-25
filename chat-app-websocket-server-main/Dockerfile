@@ -1,8 +1,22 @@
-FROM maven:3.9.6-eclipse-temurin-22-jammy as build
-COPY . .
-RUN mvn -f /app/chat-app-websocket-server-main/pom.xml clean package -DskipTests
+# Етап 1: Складання
+FROM maven:3.9.6-eclipse-temurin-22-jammy AS build
 
+WORKDIR /app
+
+# Копіюємо ВСЕ (у випадку, якщо в тебе вкладена структура)
+COPY chat-app-websocket-server-main/ .
+
+# Явно вказуємо шлях до POM
+RUN mvn -f pom.xml clean package -DskipTests
+
+# Етап 2: Запуск
 FROM openjdk:22-jdk
-COPY --from=build /target/chat-app-websocket-server-main-0.0.1-SNAPSHOT.jar websocket_demo.jar
+
+WORKDIR /app
+
+# Копіюємо зібраний jar
+COPY --from=build /app/target/websocket_demo-0.0.1-SNAPSHOT.jar app.jar
+
 EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "websocket_demo.jar"]
+
+ENTRYPOINT ["java", "-jar", "app.jar"]
