@@ -2,8 +2,12 @@ FROM maven:3.9.6-eclipse-temurin-22-jammy AS build
 
 WORKDIR /app
 
-# Копіюємо тільки ВСЕ що всередині проекту
-COPY chat-app-websocket-server-main/ .
+COPY chat-app-websocket-server-main/pom.xml .
+COPY chat-app-websocket-server-main/src ./src
+COPY chat-app-websocket-server-main/mvnw .
+COPY chat-app-websocket-server-main/mvnw.cmd .
+COPY chat-app-websocket-server-main/HELP.md .
+COPY chat-app-websocket-server-main/.mvn .mvn
 
 RUN mvn clean package -DskipTests
 
